@@ -6,7 +6,7 @@ import (
 )
 
 func TestRingBuffer(t *testing.T) {
-	var ring RingBuffer[int] = NewSimpleRingBuffer[int](3)
+	var ring RingBuffer[*int] = NewSimpleRingBuffer[*int](3)
 	log.Printf("testcase 1: no element in the ring buffer")
 	if ring.Size() != 0 {
 		t.Errorf("Size of the ring buffer should be 0, got %d", ring.Size())

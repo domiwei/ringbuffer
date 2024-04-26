@@ -7,7 +7,7 @@ import (
 var _ RingBuffer[int] = (*SimpleRingBuffer[int])(nil)
 
 type SimpleRingBuffer[T any] struct {
-	data       []*T
+	data       []T
 	size       int
 	curSize    int
 	frontIndex int
@@ -17,7 +17,7 @@ type SimpleRingBuffer[T any] struct {
 
 func NewSimpleRingBuffer[T any](size int) *SimpleRingBuffer[T] {
 	return &SimpleRingBuffer[T]{
-		data:       make([]*T, size),
+		data:       make([]T, size),
 		size:       size,
 		curSize:    0,
 		frontIndex: 0,
@@ -26,11 +26,11 @@ func NewSimpleRingBuffer[T any](size int) *SimpleRingBuffer[T] {
 	}
 }
 
-func (r *SimpleRingBuffer[T]) Push(value *T) *T {
+func (r *SimpleRingBuffer[T]) Push(value T) T {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	// assign nil to oldValue
-	var oldValue *T = nil
+	var oldValue T
 	if r.curSize == r.size {
 		oldValue = r.popNoLock()
 	}
@@ -40,36 +40,39 @@ func (r *SimpleRingBuffer[T]) Push(value *T) *T {
 	return oldValue
 }
 
-func (r *SimpleRingBuffer[T]) popNoLock() *T {
+func (r *SimpleRingBuffer[T]) popNoLock() T {
+	var value T
 	if r.curSize == 0 {
-		return nil
+		return value
 	}
-	value := r.data[r.frontIndex]
+	value = r.data[r.frontIndex]
 	r.frontIndex = (r.frontIndex + 1) % r.size
 	r.curSize--
 	return value
 }
 
-func (r *SimpleRingBuffer[T]) Pop() *T {
+func (r *SimpleRingBuffer[T]) Pop() T {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	return r.popNoLock()
 }
 
-func (r *SimpleRingBuffer[T]) Front() *T {
+func (r *SimpleRingBuffer[T]) Front() T {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 	if r.curSize == 0 {
-		return nil
+		var value T
+		return value
 	}
 	return r.data[r.frontIndex]
 }
 
-func (r *SimpleRingBuffer[T]) Back() *T {
+func (r *SimpleRingBuffer[T]) Back() T {
 	r.mutex.RLock()
 	defer r.mutex.RUnlock()
 	if r.curSize == 0 {
-		return nil
+		var value T
+		return value
 	}
 	return r.data[(r.backIndex-1+r.size)%r.size]
 }
