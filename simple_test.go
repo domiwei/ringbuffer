@@ -63,7 +63,7 @@ func TestRingBuffer(t *testing.T) {
 		t.Errorf("Back of the ring buffer should be 3, got %v", *ring.Back())
 	}
 
-	log.Printf("testcase 5: push element 4 to the ring buffer")
+	log.Printf("testcase 5: push element 4 to the ring buffer, element 1 should be removed and returned")
 	if k := ring.Push(refInt(4)); *k != 1 {
 		t.Errorf("Push should return 1, got %v", *k)
 	}
@@ -105,7 +105,7 @@ func TestRingBuffer(t *testing.T) {
 		t.Errorf("Back of the ring buffer should be 4, got %v", *ring.Back())
 	}
 
-	log.Printf("testcase 8: pop element 4 from the ring buffer")
+	log.Printf("testcase 8: pop element 4 from the ring buffer, the ring buffer should be empty")
 	if k := ring.Pop(); *k != 4 {
 		t.Errorf("Pop should return 4, got %v", *k)
 	}
@@ -136,18 +136,35 @@ func TestRingBuffer(t *testing.T) {
 		t.Errorf("Back of the ring buffer should be 5, got %v", *ring.Back())
 	}
 
-	log.Printf("testcase 10: push element 6 to the ring buffer")
+	log.Printf("testcase 10: push element 6,7 to the ring buffer, ring buffer should be full")
 	if k := ring.Push(refInt(6)); k != nil {
 		t.Errorf("Push should return nil, got %v", *k)
 	}
-	if ring.Size() != 2 {
-		t.Errorf("Size of the ring buffer should be 2, got %d", ring.Size())
+	if k := ring.Push(refInt(7)); k != nil {
+		t.Errorf("Push should return nil, got %v", *k)
 	}
-	if *ring.Front() != 5 {
-		t.Errorf("Front of the ring buffer should be 5, got %v", *ring.Front())
+	if ring.Size() != 3 {
+		t.Errorf("Size of the ring buffer should be 3, got %d", ring.Size())
 	}
-	if *ring.Back() != 6 {
-		t.Errorf("Back of the ring buffer should be 6, got %v", *ring.Back())
+
+	log.Printf("testcase 11: push element 8,9,10 to the ring buffer, element 5,6,7 should be removed and returned")
+	if k := ring.Push(refInt(8)); *k != 5 {
+		t.Errorf("Push should return 5, got %v", *k)
+	}
+	if k := ring.Push(refInt(9)); *k != 6 {
+		t.Errorf("Push should return 6, got %v", *k)
+	}
+	if k := ring.Push(refInt(10)); *k != 7 {
+		t.Errorf("Push should return 7, got %v", *k)
+	}
+	if ring.Size() != 3 {
+		t.Errorf("Size of the ring buffer should be 3, got %d", ring.Size())
+	}
+	if *ring.Front() != 8 {
+		t.Errorf("Front of the ring buffer should be 8, got %v", *ring.Front())
+	}
+	if *ring.Back() != 10 {
+		t.Errorf("Back of the ring buffer should be 10, got %v", *ring.Back())
 	}
 }
 
