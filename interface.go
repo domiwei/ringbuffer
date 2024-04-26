@@ -11,4 +11,6 @@ type RingBuffer[T any] interface {
 	Back() T
 	// Get the size of the ring buffer
 	Size() int
+	// Iterate the ring buffer
+	Iterate(func(T))
 }

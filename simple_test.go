@@ -3,6 +3,8 @@ package ringbuffer
 import (
 	"log"
 	"testing"
+
+	"github.com/alecthomas/assert/v2"
 )
 
 func TestRingBuffer(t *testing.T) {
@@ -166,6 +168,12 @@ func TestRingBuffer(t *testing.T) {
 	if *ring.Back() != 10 {
 		t.Errorf("Back of the ring buffer should be 10, got %v", *ring.Back())
 	}
+	content := []int{}
+	iterFunc := func(i *int) {
+		content = append(content, *i)
+	}
+	ring.Iterate(iterFunc)
+	assert.Equal(t, content, []int{8, 9, 10})
 }
 
 func refInt(i int) *int {

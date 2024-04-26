@@ -82,3 +82,11 @@ func (r *SimpleRingBuffer[T]) Size() int {
 	defer r.mutex.RUnlock()
 	return r.curSize
 }
+
+func (r *SimpleRingBuffer[T]) Iterate(f func(T)) {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+	for i := 0; i < r.curSize; i++ {
+		f(r.data[(r.frontIndex+i)%r.size])
+	}
+}
